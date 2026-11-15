@@ -44,6 +44,7 @@ classifiers = [
 dependencies = [
     "scipy",
     "numpy",
+    "pandas",
     "matplotlib",
 ]
 

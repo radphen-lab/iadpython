@@ -29,6 +29,7 @@ import pandas as pd
 from scipy.interpolate import interp1d, CubicSpline
 
 __all__ = ('hg_elliptic',
+           'hg_legendre',
            'phase_legendre',
            'legendre_coeffs_from_df')
 
@@ -316,3 +317,10 @@ def legendre_moments(g=None, custom_phase_function=None, max_order=16):
             chi[k] = (2 * k + 1) * (g ** k - g ** max_order) / (1 - g ** max_order) if g != 1 else 0
 
     return chi
+
+
+def hg_legendre(sample):
+    """Legacy HG redistribution API; custom phases use phase_legendre."""
+    if getattr(sample, "pf_type", "HG").upper() != "HG":
+        raise ValueError("Use phase_legendre for custom phase functions")
+    return phase_legendre(sample)
