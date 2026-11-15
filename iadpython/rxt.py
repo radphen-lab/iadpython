@@ -77,7 +77,10 @@ def fill_in_data_fixed(exp, data_in_columns):
 def fill_in_data_variable(exp, data_in_columns, column_letters_str):
     """Read data and interpret according to column_letters_str."""
     for col, letter in enumerate(column_letters_str):
-        if letter == "a":
+        if letter == "A":
+            exp.default_mua = data_in_columns[:, col]
+            exp.default_ba = exp.default_mua * exp.sample.d
+        elif letter == "a":
             exp.default_a = data_in_columns[:, col]
         elif letter == "b":
             exp.default_b = data_in_columns[:, col]
@@ -99,10 +102,15 @@ def fill_in_data_variable(exp, data_in_columns, column_letters_str):
             exp.error = data_in_columns[:, col]
         elif letter == "g":
             exp.default_g = data_in_columns[:, col]
+        elif letter == "i":
+            exp._row_quad_pts = data_in_columns[:, col].astype(int)  # pylint: disable=protected-access
         elif letter == "t":
             exp.m_t = data_in_columns[:, col]
         elif letter == "L":
             exp.lambda0 = data_in_columns[:, col]
+        elif letter == "M":
+            exp.default_mus = data_in_columns[:, col]
+            exp.default_bs = exp.default_mus * exp.sample.d
         elif letter == "n":
             exp.n = data_in_columns[:, col]
         elif letter == "N":
@@ -115,7 +123,7 @@ def fill_in_data_variable(exp, data_in_columns, column_letters_str):
         elif letter == "S":
             exp.num_spheres = data_in_columns[:, col]
         elif letter == "T":
-            exp.t_sphere.r_rstd = data_in_columns[:, col]
+            exp.t_sphere.r_std = data_in_columns[:, col]
         elif letter == "u":
             exp.m_u = data_in_columns[:, col]
         elif letter == "w":
@@ -124,6 +132,40 @@ def fill_in_data_variable(exp, data_in_columns, column_letters_str):
             exp.t_sphere.r_wall = data_in_columns[:, col]
         else:
             raise ValueError('unimplemented column type "%s"' % letter)
+
+
+def _parse_iad_options_from_comments(filename):
+    """Scan rxt comment lines for embedded iad command-line options.
+
+    Lines matching ``# ... Use iad options ... -FLAG VALUE ...`` are parsed for
+    recognised flags and returned as a dict.  This allows rxt files that were
+    designed for the C iad binary with specific flags to encode those flags as
+    documentation comments that the Python parser can also honour.
+
+    Currently recognised flags:
+        -c VALUE   fraction of coherent reflectance collected (fraction_of_rc_in_mr)
+        -H VALUE   sphere baffle configuration  (0=none, 1=R, 2=T, 3=both)
+    """
+    opts = {}
+    with open(filename, encoding="utf-8") as f:
+        for line in f:
+            m = re.search(r"#.*[Uu]se iad options(.*)", line)
+            if not m:
+                continue
+            flag_str = m.group(1)
+            mc = re.search(r"-c\s+(\S+)", flag_str)
+            if mc:
+                try:
+                    opts["fraction_of_rc_in_mr"] = float(mc.group(1))
+                except ValueError:
+                    pass
+            mh = re.search(r"-H\s+(\S+)", flag_str)
+            if mh:
+                try:
+                    opts["H"] = int(mh.group(1))
+                except ValueError:
+                    pass
+    return opts
 
 
 def read_rxt(filename):
@@ -135,6 +177,7 @@ def read_rxt(filename):
     Returns:
         Experiment object
     """
+    iad_opts = _parse_iad_options_from_comments(filename)
     s = read_and_remove_notation(filename)
     x = s.split(" ")
 
@@ -145,7 +188,7 @@ def read_rxt(filename):
 
     x = np.array([float(item) for item in x])
 
-    sample = iadpython.Sample(a=None, b=None, g=None)
+    sample = iadpython.Sample(a=None, b=None, g=None, quad_pts=8)
     sample.n = x[0]
     sample.n_above = x[1]
     sample.d = x[2]
@@ -167,12 +210,17 @@ def read_rxt(filename):
     exp.rstd_r = x[5]
     exp.num_spheres = x[6]
     exp.method = "substitution"
+    exp.input_column_labels = column_letters_str
 
-    if exp.num_spheres > 0:
-        exp.r_sphere = iadpython.Sphere(x[7], x[8], x[9], x[10], 0, x[11])
+    # rxt format: d_sphere, d_sample, d_third(entrance), d_detector, r_wall.
+    # These values are part of the file header even when num_spheres is zero.
+    # Keeping them lets iadp reproduce iad's output header and enables CLI
+    # overrides such as `-S 1` to reuse the file's sphere geometry.
+    exp.r_sphere = iadpython.Sphere(x[7], x[8], x[9], 0, x[10], 0, r_std=exp.rstd_r, r_wall=x[11])
+    exp.r_sphere.baffle = True
 
-    if exp.num_spheres > 0:
-        exp.t_sphere = iadpython.Sphere(x[12], x[13], x[14], x[15], 0, x[16])
+    exp.t_sphere = iadpython.Sphere(x[12], x[13], x[14], 0, x[15], 0, r_std=1.0, r_wall=x[16], refl=False)
+    exp.t_sphere.baffle = True
 
     # Read data
     if column_letters_str == "":
@@ -182,6 +230,7 @@ def read_rxt(filename):
         columns = int(exp.num_measures)
         if data[0] > 1:
             columns += 1
+        exp.input_column_count = columns
         data_in_columns = data.reshape(-1, columns)
         fill_in_data_fixed(exp, data_in_columns)
     else:
@@ -195,7 +244,21 @@ def read_rxt(filename):
             exp.num_measures += 1
         data = x[17:]
         columns = len(column_letters_str)
+        exp.input_column_count = columns
         data_in_columns = data.reshape(-1, columns)
         fill_in_data_variable(exp, data_in_columns, column_letters_str)
+
+    # Apply iad command-line options embedded in comment lines.
+    # These take precedence over per-row column values only when no column
+    # for the same attribute is present in the data.
+    if "fraction_of_rc_in_mr" in iad_opts:
+        if "c" not in column_letters_str:
+            exp.fraction_of_rc_in_mr = iad_opts["fraction_of_rc_in_mr"]
+    if "H" in iad_opts:
+        h_val = iad_opts["H"]
+        if exp.r_sphere is not None:
+            exp.r_sphere.baffle = h_val in (1, 3)
+        if exp.t_sphere is not None:
+            exp.t_sphere.baffle = h_val in (2, 3)
 
     return exp

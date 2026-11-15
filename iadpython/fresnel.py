@@ -72,6 +72,12 @@ def interface_rt(n_i, nu_i, n_t):
     transmitted power is obtained from the real Poynting-flux ratio, consistent
     with the wave-optics boundary formulas used elsewhere in the stack.
     """
+    if n_i == n_t:
+        shape = np.asarray(nu_i).shape
+        if not shape:
+            return 0.0, 1.0
+        return np.zeros(shape), np.ones(shape)
+
     use_complex = _is_complex_value(n_i, n_t, nu_i)
     if use_complex:
         nu_i_arr = np.asarray(nu_i, dtype=complex)
@@ -450,7 +456,7 @@ def _specular_rt(
         n_slab: index of the slab
         n_bot: index of glass on bottom
         b_slab: optical thickness of the slab
-        nu: cosine of angle(s) in slab
+        nu: cosine of incidence angle(s) in the external incident medium
         b_top: optical thickness of top slide
         b_bot: optical thickness of the bottom slide
     Returns
@@ -510,7 +516,7 @@ def specular_rt(
         n_slab: index of the slab
         n_bot: index of glass on bottom
         b_slab: optical thickness of the slab
-        nu: cosine of angle(s) in slab
+        nu: cosine of incidence angle(s) in the external incident medium
         b_top: optical thickness of top slide
         b_bot: optical thickness of the bottom slide
         flip: True if light hits bottom first

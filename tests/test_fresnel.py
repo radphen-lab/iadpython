@@ -485,8 +485,8 @@ class Specular(unittest.TestCase):
         n_bot = 1.4
         b_slab = np.inf
         nu_i = np.array([0.01, 0.2, 0.5, 0.8, 1.0])  # in air
-        nu_in = iad.cos_snell(1, nu_i, n_slab)  # in slab
-        r, t = iad.specular_rt(n_top, n_slab, n_bot, b_slab, nu_in)
+        # specular_rt uses external incidence cosine in this fork.
+        r, t = iad.specular_rt(n_top, n_slab, n_bot, b_slab, nu_i)
         rr, _ = iad.absorbing_glass_RT(1, n_top, n_slab, nu_i, 0)
         tt = np.zeros_like(nu_i)
         np.testing.assert_allclose(r, rr, atol=1e-5)
@@ -499,8 +499,8 @@ class Specular(unittest.TestCase):
         n_bot = 1.4
         b_slab = np.inf
         nu_i = np.array([0.01, 0.2, 0.5, 0.8, 1.0])  # in air
-        nu_in = iad.cos_snell(1, nu_i, n_slab)  # in slab
-        r, t = iad.specular_rt(n_top, n_slab, n_bot, b_slab, nu_in, flip=True)
+        # specular_rt uses external incidence cosine in this fork.
+        r, t = iad.specular_rt(n_top, n_slab, n_bot, b_slab, nu_i, flip=True)
         rr, _ = iad.absorbing_glass_RT(1, n_bot, n_slab, nu_i, 0)
         tt = np.zeros_like(nu_i)
         np.testing.assert_allclose(r, rr, atol=1e-5)
@@ -513,8 +513,8 @@ class Specular(unittest.TestCase):
         n_bot = 1.5
         b_slab = 1
         nu_i = 1.0
-        nu_in = iad.cos_snell(1, nu_i, n_slab)  # in slab
-        r, t = iad.specular_rt(n_top, n_slab, n_bot, b_slab, nu_in)
+        # specular_rt uses external incidence cosine in this fork.
+        r, t = iad.specular_rt(n_top, n_slab, n_bot, b_slab, nu_i)
         s = iad.Sample(b=b_slab, n=n_slab, n_above=n_top, n_below=n_bot, quad_pts=32)
         rr, tt, _, _ = s.rt()
         np.testing.assert_allclose(r, rr, atol=1e-4)

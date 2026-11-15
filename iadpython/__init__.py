@@ -38,7 +38,7 @@ __email__ = "scott.prahl@oit.edu"
 __copyright__ = "2018-2026, Scott Prahl"
 __license__ = "MIT"
 __url__ = "https://github.com/scottprahl/iadpython"
-__version__ = "0.7.0"
+__version__ = "0.7.0dev"
 
 from .constants import *
 from .fresnel import *
@@ -57,3 +57,4 @@ from .rxt import *
 from .txt import *
 from .port import *
 from .double import *
+from . import mc_lost as mc_lost  # pylint: disable=useless-import-alias

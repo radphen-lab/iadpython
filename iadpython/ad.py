@@ -172,7 +172,7 @@ class Sample:
         self.n_below = n_below
         self.n_outer_above = n_outer_above
         self.n_outer_below = n_outer_below
-        self.n_sample_boundary = n if n_sample_boundary is None else n_sample_boundary
+        self.n_sample_boundary = n_sample_boundary
         self.d_above = 1  # thickness of top slide in mm
         self.d_below = 1  # thickness of bot slide in mm
         self._nu_0 = 1.0
@@ -189,6 +189,7 @@ class Sample:
         self.twonuw = None
         self.hp = None
         self.hm = None
+        self.rt_evals = 0
         # ----- multilayer structure (Layer API) ------------------------
         # layers: public list of iadpython.Layer objects (or None for the
         # classic flat single-layer form).  _layer_pf: internal marker set by
@@ -218,6 +219,15 @@ class Sample:
             self.hp = None
             self.hm = None
             self._n = value
+
+    @property
+    def n_sample_boundary(self):
+        """Boundary index follows transport n unless explicitly overridden."""
+        return self.n if self._n_sample_boundary is None else self._n_sample_boundary
+
+    @n_sample_boundary.setter
+    def n_sample_boundary(self, value):
+        self._n_sample_boundary = value
 
     @property
     def nu_0(self):
@@ -1141,6 +1151,7 @@ class Sample:
         input is an array, the lengths of ``a``, ``b``, and the phase-function
         data must match.
         """
+        self.rt_evals += 1
         if self.layers is not None:
             n_wave = iadpython.layer.validate_layers(self.layers)
             if n_wave == 1:
@@ -1240,6 +1251,8 @@ class Sample:
             n_bot,
             b_slab,
             self.nu_0,
+            b_top=self.b_above,
+            b_bot=self.b_below,
             n_outer_top=self.n_outer_above,
             n_outer_bot=self.n_outer_below,
             n_slab_transport=self.n,
