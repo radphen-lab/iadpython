@@ -3,6 +3,18 @@ Changelog for `iadpython` package
 
 0.8.0 (unreleased, fork)
 ------------------------
+* align ``iadpython.__version__`` and distribution metadata at ``0.8.0``
+  for the multilayer fork; keep generated egg-info and build output out of Git
+* run fork CI on ``master`` as well as ``main``, including multilayer, custom
+  phase-function and upstream/fork compatibility regressions
+* include JSON reference fixtures in source distributions so multilayer
+  compatibility tests can also run from the packaged sources
+* rename the fork's distribution from ``iadpython`` to ``radphen-iadpython``
+  in ``pyproject.toml`` to distinguish it from upstream and satisfy empylib's
+  fork dependency; the Python import remains ``import iadpython``
+* when migrating an editable install, remove stale ``iadpython.egg-info``
+  metadata from the source checkout before reinstalling to avoid reporting
+  both distribution names and triggering empylib's backend conflict check
 * add ``Layer`` class and ``Sample(layers=[...])`` API for explicit multilayer
   structure; each layer carries its own a, b, g, n, d, and phase function
 * support refractive-index mismatched layers exactly (Snell-invariant master

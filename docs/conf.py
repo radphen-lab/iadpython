@@ -12,7 +12,7 @@ project = "iadpython"
 root_doc = "index"
 
 try:
-    release = pkg_version(project)
+    release = pkg_version("radphen-iadpython")
 except PackageNotFoundError:
     release = "0+unknown"
 version = release

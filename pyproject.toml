@@ -13,7 +13,7 @@ iadpython = ["data/*.csv", "iadplus", "iadsum"]
 version = { attr = "iadpython.__version__" }
 
 [project]
-name = "iadpython"
+name = "radphen-iadpython"
 dynamic = ["version"]
 authors = [{ name = "Scott Prahl", email = "scott.prahl@oit.edu" }]
 description = "Forward and inverse radiative transport using adding-doubling"
@@ -88,11 +88,11 @@ lite = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/scottprahl/iadpython"
+Homepage = "https://github.com/PanxoPanza/iadpython"
 Documentation = "https://iadpython.readthedocs.io"
-Source = "https://github.com/scottprahl/iadpython"
-Tracker = "https://github.com/scottprahl/iadpython/issues"
-Changelog = "https://github.com/scottprahl/iadpython/blob/main/docs/CHANGELOG.rst"
+Source = "https://github.com/PanxoPanza/iadpython"
+Tracker = "https://github.com/PanxoPanza/iadpython/issues"
+Changelog = "https://github.com/PanxoPanza/iadpython/blob/master/CHANGELOG.rst"
 
 [tool.black]
 line-length = 120

@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       confirm-version:
-        description: Type 0.7.0 when dispatching the validated release tag
+        description: Type 0.8.0 when dispatching the validated release tag
         required: true
         type: string
 permissions:
@@ -14,5 +14,5 @@ jobs:
     steps:
       - name: Require release-tag workflow
         run: |
-          echo 'Dispatch pypi.yaml with --ref v0.7.0 and confirm-version=0.7.0 after backend CI passes.'
+          echo 'Dispatch pypi.yaml with --ref v0.8.0 and confirm-version=0.8.0 after backend CI passes.'
           exit 1

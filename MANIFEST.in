@@ -9,4 +9,4 @@ include iadpython/data/*.csv
 
 # Test suite + fixtures for reproducible sdist testing
 recursive-include tests *.py
-recursive-include tests/data *.rxt *.txt
+recursive-include tests/data *.rxt *.txt *.json

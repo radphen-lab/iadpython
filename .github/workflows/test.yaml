@@ -4,9 +4,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
   pull_request:
-    branches: [main]
+    branches: [main, master]
   workflow_dispatch:
 
 concurrency:
@@ -57,3 +57,4 @@ jobs:
           python -m pytest tests/test_sphere.py
           python -m pytest tests/test_start.py
           python -m pytest tests/test_ur1_uru.py
+          python -m pytest tests/test_layer_api.py tests/test_mismatched_layers.py tests/test_merge_compatibility.py tests/test_outer_media.py

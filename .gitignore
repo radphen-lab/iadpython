@@ -25,7 +25,8 @@ docs/sphere-refs/
 
 iad/
 iadpython/__pycache__/
-iadpython.egg-info/
+*.egg-info/
+build/
 iadpython/.ipynb_checkpoints/
 iadp
 
