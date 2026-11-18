@@ -1,9 +1,9 @@
 .. |fork| image:: https://img.shields.io/badge/GitHub-RadPhen%20fork-68CA66
-   :target: https://github.com/PanxoPanza/iadpython
+   :target: https://github.com/radphen-lab/iadpython
    :alt: RadPhen fork
 
 .. |license| image:: https://img.shields.io/github/license/radphen-lab/iadpython?color=68CA66
-   :target: https://github.com/PanxoPanza/iadpython/blob/master/LICENSE.txt
+   :target: https://github.com/radphen-lab/iadpython/blob/master/LICENSE.txt
    :alt: MIT license
 
 .. |pypi| image:: https://img.shields.io/pypi/v/iadpython?label=upstream%20PyPI&color=68CA66
@@ -19,7 +19,7 @@ iadpython — RadPhen fork
 
 Based on `iadpython by Scott Prahl <https://github.com/scottprahl/iadpython>`_,
 with forward-transport extensions maintained in the
-`RadPhen fork <https://github.com/PanxoPanza/iadpython>`_.
+`RadPhen fork <https://github.com/radphen-lab/iadpython>`_.
 
 |fork| |license| |pypi| |docs|
 
@@ -43,11 +43,11 @@ Installation
 
 Requires Python 3.10 or later. Install the current fork directly::
 
-    python -m pip install "git+https://github.com/PanxoPanza/iadpython.git@master"
+    python -m pip install "git+https://github.com/radphen-lab/iadpython.git@master"
 
 For development::
 
-    git clone https://github.com/PanxoPanza/iadpython.git
+    git clone https://github.com/radphen-lab/iadpython.git
     cd iadpython
     python -m pip install -e . --config-settings editable_mode=compat
 

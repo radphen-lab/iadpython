@@ -88,11 +88,11 @@ lite = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/PanxoPanza/iadpython"
+Homepage = "https://github.com/radphen-lab/iadpython"
 Documentation = "https://iadpython.readthedocs.io"
-Source = "https://github.com/PanxoPanza/iadpython"
-Tracker = "https://github.com/PanxoPanza/iadpython/issues"
-Changelog = "https://github.com/PanxoPanza/iadpython/blob/master/CHANGELOG.rst"
+Source = "https://github.com/radphen-lab/iadpython"
+Tracker = "https://github.com/radphen-lab/iadpython/issues"
+Changelog = "https://github.com/radphen-lab/iadpython/blob/master/CHANGELOG.rst"
 
 [tool.black]
 line-length = 120
